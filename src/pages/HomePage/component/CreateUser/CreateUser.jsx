@@ -6,6 +6,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Grid } from '@material-ui/core';
+import { Email, Person, Visibility, VisibilityOff, EuroSymbol } from '@material-ui/icons/';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 
 export default class CreateUser extends React.Component {
   state = {
@@ -13,18 +16,22 @@ export default class CreateUser extends React.Component {
     name: '',
     email: '',
     password: '',
-    birthday: '',
+    // birthday: '',
     gender: '',
+    passwordVisibility: {
+      showPassword: false,
+      showConfirmPassword: false,
+    },
   };
 
-  getDate = () => {
-    let today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    today =  yyyy + '-' + mm + '-' + dd;
-    return today;
-  }
+  // getDate = () => {
+  //   let today = new Date();
+  //   const dd = String(today.getDate()).padStart(2, '0');
+  //   const mm = String(today.getMonth() + 1).padStart(2, '0');
+  //   const yyyy = today.getFullYear();
+  //   today =  yyyy + '-' + mm + '-' + dd;
+  //   return today;
+  // }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -40,13 +47,23 @@ export default class CreateUser extends React.Component {
     });
   };
 
+  handleClickShowPassword = field => () => {
+    const { passwordVisibility } = this.state;
+    this.setState({
+      passwordVisibility: { ...passwordVisibility, [field]: !passwordVisibility[field] },
+  })
+}
+
   render() {
-    const { open, name, email, confirmPassword, password, gender } = this.state;
+    const { open, name, email, password, gender, confirmPassword, passwordVisibility } = this.state;
+    const { showConfirmPassword, showPassword } = passwordVisibility;
     return (
       <div>
+        <h2>New Here !</h2>
         <Button onClick={this.handleClickOpen} variant="contained" color="primary">
           Create New Account
         </Button>
+        <h2>OR</h2>
         <Dialog
           open={open}
           onClose={this.handleClose}
@@ -63,6 +80,13 @@ export default class CreateUser extends React.Component {
               onChange={this.handleChange('name')}
               margin="normal"
               variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Person />
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               required
@@ -73,9 +97,16 @@ export default class CreateUser extends React.Component {
               onChange={this.handleChange('email')}
               margin="normal"
               variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Email />
+                  </InputAdornment>
+                ),
+              }}
             />
-            <Grid container spacing={16} alignContent='space-between' >
-              <Grid item xs={6}>
+            {/* <Grid container spacing={16} alignContent='space-between' > */}
+              {/* <Grid item xs={6}>
                 <TextField
                 required
                 fullWidth
@@ -90,8 +121,8 @@ export default class CreateUser extends React.Component {
                   shrink: true,
                 }}
               />
-              </Grid>
-              <Grid item xs={6}>
+              </Grid> */}
+              {/* <Grid item xs={16}> */}
                 <TextField
                   required
                   fullWidth
@@ -101,9 +132,16 @@ export default class CreateUser extends React.Component {
                   onChange={this.handleChange('gender')}
                   margin="normal"
                   variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EuroSymbol />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </Grid>
-            </Grid>
+              {/* </Grid> */}
+            {/* </Grid> */}
             <Grid container spacing={16} alignContent='space-between' >
               <Grid item xs={6}>
                 <TextField
@@ -111,10 +149,23 @@ export default class CreateUser extends React.Component {
                   fullWidth
                   id="outlined-password"
                   label="Password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={this.handleChange('password')}
                   margin="normal"
                   variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          aria-label="Toggle password visibility"
+                          onClick={this.handleClickShowPassword('showPassword')}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -123,10 +174,23 @@ export default class CreateUser extends React.Component {
                   fullWidth
                   id="outlined-confirmPassword"
                   label="Confirm Password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={this.handleChange('confirmPassword')}
                   margin="normal"
                   variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          aria-label="Toggle password visibility"
+                          onClick={this.handleClickShowPassword('showConfirmPassword')}
+                        >
+                          {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>
