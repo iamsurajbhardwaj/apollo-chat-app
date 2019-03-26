@@ -11,6 +11,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton';
 import { Email, VisibilityOff, Visibility } from '@material-ui/icons/';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { Link } from 'react-router-dom';
 
 
 const styles = theme => ({
@@ -39,6 +40,7 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit * 3,
   },
 });
 class Login extends React.Component {
@@ -118,15 +120,17 @@ class Login extends React.Component {
             }}
           />
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
             onClick={() => this.handleClick}
           >
-          Login
+            <Link to="/loggedIn">
+              Login
+            </Link>
           </Button>
+          <p>© Successive Technologies</p>
         </Paper>
       </main>
     );

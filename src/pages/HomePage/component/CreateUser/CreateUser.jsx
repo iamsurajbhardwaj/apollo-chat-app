@@ -9,8 +9,26 @@ import { Grid } from '@material-ui/core';
 import { Email, Person, Visibility, VisibilityOff, EuroSymbol } from '@material-ui/icons/';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 
-export default class CreateUser extends React.Component {
+const addUser = gql`
+  mutation {
+    createUser(data: {
+      email: "bhardwajSuraj320@mail.com"
+      name: "Suraj Bhardwaj"
+      gender: "Male"
+      password: "my@password"
+    }) {
+      email
+      name
+      gender
+      password
+    }
+  }
+`;
+
+class CreateUser extends React.Component {
   state = {
     open: false,
     name: '',
@@ -208,3 +226,5 @@ export default class CreateUser extends React.Component {
     );
   }
 }
+
+export default graphql(addUser)(CreateUser);

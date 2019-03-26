@@ -1,23 +1,5 @@
 import React from 'react'
-import gql from "graphql-tag";
-import { query } from "react-apollo";
 import { CreateUser, Login } from './component';
-
-const ADD_USER = gql`
-  query {
-    Users(data: {
-      email: "bhardwajSuraj320@mail.com"
-      name: "Suraj Bhardwaj"
-      gender: "Male"
-      password: "my@password"
-    }) {
-      email
-      name
-      gender
-      password
-    }
-  }
-`;
 
 class HomePage extends React.Component {
   constructor (props) {
@@ -37,9 +19,6 @@ class HomePage extends React.Component {
         </span>
         <CreateUser />
         <Login />
-        {/* <div style={{ position: 'fixed', width: '100%', overflow: 'hidden'}}>
-          <img src="/images/background-2.jpg" alt="Background Image"/>
-        </div> */}
       </div>
     )
   }
