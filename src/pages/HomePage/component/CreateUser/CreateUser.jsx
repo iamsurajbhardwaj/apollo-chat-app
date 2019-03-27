@@ -10,16 +10,11 @@ import { Email, Person, Visibility, VisibilityOff, EuroSymbol } from '@material-
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 
-const addUser = gql`
-  mutation {
-    createUser(data: {
-      email: "bhardwajSuraj320@mail.com"
-      name: "Suraj Bhardwaj"
-      gender: "Male"
-      password: "my@password"
-    }) {
+const ADD_USER = gql`
+  mutation users ($data: UserCreateInput!) {
+    createUser(data: $data) {
       email
       name
       gender
@@ -69,8 +64,14 @@ class CreateUser extends React.Component {
     const { passwordVisibility } = this.state;
     this.setState({
       passwordVisibility: { ...passwordVisibility, [field]: !passwordVisibility[field] },
-  })
-}
+    })
+  }
+
+  handleCreateUser = createUser => () => {
+    const { email, name, gender, password } = this.state;
+    createUser({ variables: { data: { email , name , gender ,password } } });
+    this.handleClose();
+  }
 
   render() {
     const { open, name, email, password, gender, confirmPassword, passwordVisibility } = this.state;
@@ -217,9 +218,14 @@ class CreateUser extends React.Component {
             <Button variant='contained' onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button variant='contained' onClick={this.handleClose} color="primary">
-              Create
-            </Button>
+            <Mutation mutation={ADD_USER}>
+                  {(createUser, { data }) => (
+                    <Button variant='contained' onClick={this.handleCreateUser(createUser)} color="primary">
+                      Create
+                    </Button>
+                    )
+                  }
+            </Mutation>
           </DialogActions>
         </Dialog>
       </div>
@@ -227,4 +233,4 @@ class CreateUser extends React.Component {
   }
 }
 
-export default graphql(addUser)(CreateUser);
+export default CreateUser;

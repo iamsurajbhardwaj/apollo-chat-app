@@ -12,6 +12,17 @@ import IconButton from '@material-ui/core/IconButton';
 import { Email, VisibilityOff, Visibility } from '@material-ui/icons/';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Link } from 'react-router-dom';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
+
+const getUser = gql`
+  query {
+    users{
+      name
+      email
+      password
+    }
+  }`
 
 
 const styles = theme => ({
@@ -48,9 +59,11 @@ class Login extends React.Component {
     super(props);
     this.state = {
       open: '',
+      name: '',
       email: '',
       password: '',
       showPassword: false,
+      login: false,
     };
   }
 
@@ -66,9 +79,37 @@ class Login extends React.Component {
     });
   };
 
+  handleLoginClick = () => {
+    const { name, email } = this.state;
+    localStorage.setItem('email', email );
+    localStorage.setItem('name', name);
+  }
+
+  handleAuth = () => {
+    const { data: { users } } = this.props;
+    const { email, password } = this.state;
+    if (users && email) {
+      const authData = users.find((user) => {
+        if (user.email === email) return user;
+      }
+      );
+      if(authData.email === email && authData.password === password) {
+        this.setState({
+          login: true,
+          name: authData.name
+        })
+        localStorage.removeItem('email');
+        localStorage.removeItem('name');
+        return authData;
+      };
+      return null;
+    }
+    return null;
+  }
+
   render() {
     const { classes } = this.props;
-    const { email, password, showPassword } = this.state;
+    const { name, email, password, showPassword, login } = this.state;
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -119,17 +160,29 @@ class Login extends React.Component {
               ),
             }}
           />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => this.handleClick}
-          >
-            <Link to="/loggedIn">
-              Login
-            </Link>
-          </Button>
+          {
+            login
+            ? (<Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={() => this.handleLoginClick()}
+              >
+                <Link to="/loggedIn">
+                Login
+                </Link>
+              </Button>)
+            : <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={() => this.handleAuth()}
+                className={classes.submit}
+              >
+                verify
+              </Button>
+            }
           <p>© Successive Technologies</p>
         </Paper>
       </main>
@@ -141,4 +194,4 @@ Login.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
-export default withStyles(styles)(Login);
+export default graphql(getUser)(withStyles(styles)(Login));

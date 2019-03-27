@@ -15,11 +15,8 @@ class ChatPage extends React.Component {
         <span style={{ color: 'black', fontSize: '25px', textAlign: "center"}}>
           <h1>Spread Happiness Through Your Beautiful Words !</h1>
         </span>
-        <Paper>
-          <div style={{ paddingRight: "15px"}}>
-          <div style={{paddingLeft: "10px", color: "Blue"}}>
-          <h2>Rohit Sharma</h2>
-          </div>
+        <Paper elevation={20}>
+          <div style={{ paddingRight: "15px" }}>
           <Grid container spacing={16} alignContent='space-between'>
               <Grid item xs={3}>
                 <div style={{ fontWeight: "bold", fontSize: "20px" , paddingLeft: "10px", paddingRight: "10px"}}>
