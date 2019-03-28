@@ -79,11 +79,11 @@ class Login extends React.Component {
     });
   };
 
-  handleLoginClick = () => {
-    const { name, email } = this.state;
-    localStorage.setItem('email', email );
-    localStorage.setItem('name', name);
-  }
+  // handleLoginClick = () => {
+  //   const { name, email } = this.state;
+  //   localStorage.setItem('email', email );
+  //   localStorage.setItem('name', name);
+  // }
 
   handleAuth = () => {
     const { data: { users } } = this.props;
@@ -98,8 +98,8 @@ class Login extends React.Component {
           login: true,
           name: authData.name
         })
-        localStorage.removeItem('email');
-        localStorage.removeItem('name');
+        // localStorage.removeItem('email');
+        // localStorage.removeItem('name');
         return authData;
       };
       return null;
@@ -113,7 +113,7 @@ class Login extends React.Component {
     return (
       <main className={classes.main}>
         <CssBaseline />
-        <Paper className={classes.paper}>
+        <Paper elevation="20" className={classes.paper}>
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
@@ -167,9 +167,9 @@ class Login extends React.Component {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={() => this.handleLoginClick()}
+                // onClick={() => this.handleLoginClick()}
               >
-                <Link to="/loggedIn">
+                <Link to={{ pathname: '/loggedIn', state: { user: {email: email,name: name}} }}>
                 Login
                 </Link>
               </Button>)

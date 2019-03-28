@@ -10,4 +10,5 @@ type Chat {
   email: String!
   message: String!
   sentBy: String!
+  sentTo: String!
 }

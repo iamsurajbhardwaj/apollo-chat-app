@@ -25,13 +25,12 @@ class App extends Component {
                   <Redirect to="/homePage" />
                 </Route>
                 <Route exact path="/homePage" component={HomePage} />
-                <Route exact path="/loggedIn" component={ChatPage} />
+                <Route path="/loggedIn/" component={ChatPage} />
               </Switch>
             </Router>
           </div>
         </ApolloProvider>
       </MuiThemeProvider>
-
     );
   }
 }

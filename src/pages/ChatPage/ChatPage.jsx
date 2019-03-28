@@ -10,6 +10,8 @@ class ChatPage extends React.Component {
   }
 
   render() {
+    const { location: { state: { user, chatTo } } } = this.props;
+    console.log('chatPage', user, chatTo);
     return (
       <div style={ { display: 'flex', flexDirection: 'column'}}>
         <span style={{ color: 'black', fontSize: '25px', textAlign: "center"}}>
@@ -20,12 +22,12 @@ class ChatPage extends React.Component {
           <Grid container spacing={16} alignContent='space-between'>
               <Grid item xs={3}>
                 <div style={{ fontWeight: "bold", fontSize: "20px" , paddingLeft: "10px", paddingRight: "10px"}}>
-                  <Users />
+                  <Users user={user} />
                 </div>
               </Grid>
               <Grid item xs={9}>
-                <div style={{borderLeft: "2px solid", paddingLeft: "10px", paddingRight: "10px"}}>
-                  <Chat />
+                <div style={{ paddingLeft: "10px", paddingRight: "10px"}}>
+                  <Chat chatTo={chatTo} user={user} />
                 </div>
               </Grid>
             </Grid>
