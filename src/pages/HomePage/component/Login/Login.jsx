@@ -1,19 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import withStyles from '@material-ui/core/styles/withStyles';
-import IconButton from '@material-ui/core/IconButton';
-import { Email, VisibilityOff, Visibility } from '@material-ui/icons/';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Paper from '@material-ui/core/Paper';
+import React from 'react';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
+import { Email, VisibilityOff, Visibility } from '@material-ui/icons/';
 
 const getUser = gql`
   query {
@@ -64,6 +64,7 @@ class Login extends React.Component {
       password: '',
       showPassword: false,
       login: false,
+      error: false,
     };
   }
 
@@ -79,29 +80,25 @@ class Login extends React.Component {
     });
   };
 
-  // handleLoginClick = () => {
-  //   const { name, email } = this.state;
-  //   localStorage.setItem('email', email );
-  //   localStorage.setItem('name', name);
-  // }
-
   handleAuth = () => {
     const { data: { users } } = this.props;
     const { email, password } = this.state;
     if (users && email) {
-      const authData = users.find((user) => {
-        if (user.email === email) return user;
-      }
+      const authData = users.find((user) => (
+        (user.email === email) ? user : ''
+      )
       );
       if(authData.email === email && authData.password === password) {
         this.setState({
           login: true,
           name: authData.name
         })
-        // localStorage.removeItem('email');
-        // localStorage.removeItem('name');
         return authData;
-      };
+      } else {
+        this.setState({
+          error: true,
+        })
+      }
       return null;
     }
     return null;
@@ -109,7 +106,7 @@ class Login extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { name, email, password, showPassword, login } = this.state;
+    const { name, email, password, showPassword, login, error } = this.state;
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -162,17 +159,16 @@ class Login extends React.Component {
           />
           {
             login
-            ? (<Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                // onClick={() => this.handleLoginClick()}
-              >
-                <Link to={{ pathname: '/loggedIn', state: { user: {email: email,name: name}} }}>
-                Login
-                </Link>
-              </Button>)
+            ? ( <Link to={{ pathname: '/loggedIn', state: { user: {email: email,name: name}} }}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                  >
+                  Login
+                  </Button>
+                </Link>)
             : <Button
                 fullWidth
                 variant="contained"
@@ -184,6 +180,7 @@ class Login extends React.Component {
               </Button>
             }
           <p>© Successive Technologies</p>
+          { error? <p style={{ color: "red"}}>Please enter valid details!</p>: ''}
         </Paper>
       </main>
     );

@@ -21,36 +21,18 @@ const GET_USERS = gql`
 `;
 
 const CustomTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
   body: {
-    fontSize: 14
+    fontSize: 14,
+    minWidth: 190
   }
 }))(TableCell);
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
-  },
-  table: {
-    minWidth: 700
-  },
   link: {
     textDecoration: "none",
     color: "black",
-    fontSize: 20,
   },
   row: {
-    // "&:nth-of-type(odd)": {
-    //   backgroundColor: "yellow"
-    // },
-    // "&:nth-of-type(even)": {
-    //   backgroundColor: "green"
-    // },
     "&:hover": {
       backgroundColor: theme.palette.grey[400]
     }
@@ -81,24 +63,22 @@ class Users extends React.Component {
           const userList = data.users.map(user => {
             if (user.email !== loggedUser.email) {
               return (
-                <>
-                  <TableRow className={classes.row} key={user.email}>
-                    <CustomTableCell>
+                    <TableRow className={classes.row} key={user.email}>
+                      <CustomTableCell >
                       <Link
-                        className={classes.link}
-                        to={{
-                          pathname: "/loggedIn",
-                          state: {
-                            user: loggedUser,
-                            chatTo: { email: user.email, name: user.name }
-                          }
-                        }}
-                      >
-                        <p>{user.name}</p>
-                      </Link>
-                    </CustomTableCell>
-                  </TableRow>
-                </>
+                    className={classes.link}
+                    to={{
+                      pathname: "/loggedIn",
+                      state: {
+                        user: loggedUser,
+                        chatTo: { email: user.email, name: user.name }
+                      }
+                    }}
+                  >
+                        {user.name}
+                        </Link>
+                      </CustomTableCell>
+                    </TableRow>
               );
             }
             return null;
@@ -113,20 +93,17 @@ class Users extends React.Component {
   render() {
     const { user } = this.props;
     const { search } = this.state;
-    // console.log("stateUsersComponent", this.state);
     return (
-      <div>
-        <div style={{ paddingLeft: "10px", color: "Blue" }}>
-          <h3>{user.name}</h3>
+      <div style={{paddingRight: "5px", paddingLeft: "5px", }}>
+        <div>
+          <h1>{user.name}</h1>
         </div>
         <hr color="green" />
         <TextField
-          fullWidth
           id="outlined-Search"
           placeholder="Search"
           value={search}
-          margin="normal"
-          variant="outlined"
+          // variant="outlined"
           onChange={this.handleChange("search")}
           InputProps={{
             endAdornment: (

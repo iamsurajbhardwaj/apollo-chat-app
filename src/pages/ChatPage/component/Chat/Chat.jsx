@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { Send } from '@material-ui/icons/';
 import gql from 'graphql-tag';
-import { Mutation, Query } from 'react-apollo';
+import { Mutation, Query, graphql } from 'react-apollo';
 
 const GET_CHAT = gql`
   query {
@@ -14,6 +14,16 @@ const GET_CHAT = gql`
       sentTo
     }
   }`
+
+  // const GET_CHAT = gql`
+  // query($where: ChatWhereInput!) {
+  //   chats(where: $where){
+  //     sentBy
+  //     email
+  //     message
+  //     sentTo
+  //   }
+  // }`
 
   const ADD_CHAT = gql`
   mutation chats ($data: ChatCreateInput!) {
@@ -43,63 +53,79 @@ class Chat extends React.Component {
   handleCreateChat = createChat => () => {
     const { message } = this.state;
     const { chatTo, user } = this.props;
-    this.setState({
-      message: "",
-    })
     createChat({ variables: { data: { email: user.email , message , sentBy: user.name, sentTo: chatTo.email } } });
+    this.setState({
+      message: '',
+    })
   }
+
+  componentWillMount() {
+this.forceUpdate()  }
+
+componentWillUnmount() {
+  console.log('will unmount')
+}
 
   getMessage = () => (
     <Query
       query={GET_CHAT}
+      // variables={{where:
+      //   { "OR" : {email: "bhardwajsuraj@mail.com", sentTo: "shubhamsoni@mail.com"}     }}}
       pollInterval={3}
     >
     {({ loading, error, data }) => {
+      console.log('Chat check', data.chats)
       const { chatTo, user } = this.props;
+      const { chats } = data;
+      console.log('chats >>>>>>>>>>>>>', chats, chatTo);
       // if (loading) return <p>Loading...</p>;
       if (error) return <p>Error! ${error.message}</p>;
-      if(data.chats && chatTo) {
-        const chatMessage = data.chats.map((message) => {
-          console.log('chat Component', message.sentTo, chatTo.email);
+      if(chats && chatTo) {
+        let chatMessage = [];
+        console.log('>>>>>>>>>', chatMessage);
+        chats.forEach((message) => {
         if(message.email === user.email && chatTo.email === message.sentTo){
-          return(
-            <div key={message.message} style={
+          console.log('get chat', message.email, user.email, chatTo.email, message.sentTo )
+          chatMessage.push(
+            <div key={`${message.email}`} style={
               {
               float: "right",
               position: "relative",
               clear: "both",
-              background: "#95c2fd",
               padding: "1px",
+              border: "1px solid",
               borderRadius: "3px",
               marginBottom: "10px",
               color: "black",
               }
             }>
-              <p style={{color: "red", background: "white"}}>{message.sentBy}:</p>
+              <p style={{color: "blue"}}>{message.sentBy}:</p>
               <p>{message.message}  ◄</p>
             </div>
           )
         }
-        if (message.email === chatTo.email && message.sentTo === user.email) {
-          return(
-            <div key={message.message} style={
+        else if (message.email === chatTo.email && message.sentTo === user.email) {
+          console.log('get chat', message.email, chatTo.email, message.sentTo, user.email )
+          chatMessage.push(
+            <div key={message.email} style={
               {
               float: "left",
               position: "relative",
               clear: "both",
-              background: "#95c2fd",
               padding: "1px",
+              border: "1px solid",
               borderRadius: "3px",
               marginBottom: "10px",
               color: "black",
               }
             }>
-              <p style={{color: "red", background: "white"}}>{message.sentBy}:</p>
+              <p style={{color: "blue"}}>{message.sentBy}:</p>
               <p>►  {message.message}</p>
             </div>
           )
         }
       });
+      console.log('chatmessage', chatMessage);
       return chatMessage;
       }
       return null;
@@ -109,12 +135,12 @@ class Chat extends React.Component {
 
   render() {
     const { chatTo } = this.props;
-    console.log('chatComponent', chatTo)
+    const { message } = this.state;
     return(
-      <div>
-        <div>
+      <div style={{boxSizing: "content-box", border: "none"}}>
+        <div style={{display: "flex", justifyContent: "space-between"}}>
           <span style={{ color: "Blue", textAlign: "left"}}>
-            <h2>{chatTo ? chatTo.name: ''}</h2>
+            <h2>{chatTo ? `TO► ${chatTo.name}`: ''}</h2>
           </span>
           <span style={{ color: "red", textAlign: "right"}}>
             <h2>My Chat App</h2>
@@ -131,6 +157,7 @@ class Chat extends React.Component {
                 fullWidth
                 id="standard-SendMessage"
                 placeholder="Type Your Message Here"
+                value={message}
                 margin="normal"
                 variant="standard"
                 onChange={this.handleChange('message')}
@@ -141,10 +168,10 @@ class Chat extends React.Component {
                           <IconButton
                           aria-label="Send-Message"
                           onClick={this.handleCreateChat(createChat)}
-                        >
+                          >
                           <Send color="primary" />
-                        </IconButton>
-                          )
+                          </IconButton>
+                        )
                         }
                   </Mutation>
                   ),
@@ -157,5 +184,5 @@ class Chat extends React.Component {
   }
 }
 
-export default Chat;
-// graphql(getChat)
+// export default Chat;
+export default graphql(GET_CHAT)(Chat);

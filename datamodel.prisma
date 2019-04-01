@@ -12,3 +12,5 @@ type Chat {
   sentBy: String!
   sentTo: String!
 }
+
+
