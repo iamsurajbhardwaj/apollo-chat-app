@@ -1,0 +1,14 @@
+type User {
+  id: ID! @unique
+  email: String @unique
+  name: String!
+  gender: String!
+  password: String!
+}
+
+type Chat {
+  email: String!
+  message: String!
+  sentBy: String!
+  sentTo: String!
+}

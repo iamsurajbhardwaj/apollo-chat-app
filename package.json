@@ -1,0 +1,45 @@
+{
+  "name": "training",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
+    "apollo-boost": "^0.3.1",
+    "apollo-cache-inmemory": "^1.5.1",
+    "apollo-link-http": "^1.5.14",
+    "apollo-link-ws": "^1.0.17",
+    "eslint-config-airbnb": "^17.1.0",
+    "graphql": "^14.1.1",
+    "graphql-tag": "^2.10.1",
+    "moment": "^2.24.0",
+    "prisma-client-lib": "^1.29.1",
+    "react": "^16.8.4",
+    "react-apollo": "^2.5.3",
+    "react-client": "^1.0.1",
+    "react-dom": "^16.8.4",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.8"
+  },
+  "hooks": {
+    "pre-commit": "npm run lint",
+    "pre-push": "npm run lint"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "lint": "./node_modules/eslint/bin/eslint.js src/**/*.js -c .eslintrc",
+    "lint:fix": "node_modules/eslint/bin/eslint.js src/**/*.js -c .eslintrc --fix",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
