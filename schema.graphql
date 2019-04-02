@@ -1,0 +1,14 @@
+type Query {
+  getUser: [User]
+  getChat: [Chat]
+}
+
+type Mutation {
+  sendMessage(email: String!, sentBy: String!, sentTo: String!, mesage: String!): Chat!
+  addUser(name: String!, email: String! @Unique, password: String!): User!
+}
+
+type Subscription {
+  newMessage: Chat!
+  newUser: User!
+}

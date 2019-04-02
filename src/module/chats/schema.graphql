@@ -1,0 +1,6 @@
+type Chat {
+  email: String!
+  message: String!
+  sentTo: String!
+  SentBy: String!
+}
