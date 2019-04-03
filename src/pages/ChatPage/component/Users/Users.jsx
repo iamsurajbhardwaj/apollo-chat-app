@@ -13,12 +13,21 @@ import { Query } from "react-apollo";
 
 const GET_USERS = gql`
   query {
-    users {
+    getAllUser {
       name
       email
     }
   }
 `;
+
+// const USER_SUBSCRIPTION = gql`
+//   subscription {
+//     newUser {
+//       name
+//       email
+//     }
+//   }
+// `
 
 const CustomTableCell = withStyles(theme => ({
   body: {
@@ -55,27 +64,27 @@ class Users extends React.Component {
 
   getUsers = () => (
     <Query query={GET_USERS} pollInterval={3}>
-      {({ loading, error, data }) => {
+      {({ error, data }) => {
         const { classes, user: loggedUser } = this.props;
-        // if (loading) return <p>Loading...</p>;
+        const { getAllUser } = data;
         if (error) return <p>Error! ${error.message}</p>;
-        if (data.users) {
-          const userList = data.users.map(user => {
+        if (getAllUser) {
+          const userList = getAllUser.map(user => {
             if (user.email !== loggedUser.email) {
               return (
                     <TableRow className={classes.row} key={user.email}>
                       <CustomTableCell >
-                      <Link
-                    className={classes.link}
-                    to={{
-                      pathname: "/loggedIn",
-                      state: {
-                        user: loggedUser,
-                        chatTo: { email: user.email, name: user.name }
-                      }
-                    }}
-                  >
-                        {user.name}
+                        <Link
+                          className={classes.link}
+                          to={{
+                            pathname: "/loggedIn",
+                            state: {
+                              user: loggedUser,
+                              chatTo: { email: user.email, name: user.name }
+                            }
+                          }}
+                        >
+                          {user.name}
                         </Link>
                       </CustomTableCell>
                     </TableRow>

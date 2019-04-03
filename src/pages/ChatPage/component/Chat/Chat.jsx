@@ -6,24 +6,14 @@ import gql from 'graphql-tag';
 import { Mutation, Query, graphql } from 'react-apollo';
 
 const GET_CHAT = gql`
-  query {
-    chats{
-      sentBy
+  query($email: String!, $SentTo: String!) {
+    getChat(email: $email, sentTo: $SentTo){
       email
-      message
+      sentBy
       sentTo
+      message
     }
   }`
-
-  // const GET_CHAT = gql`
-  // query($where: ChatWhereInput!) {
-  //   chats(where: $where){
-  //     sentBy
-  //     email
-  //     message
-  //     sentTo
-  //   }
-  // }`
 
   const ADD_CHAT = gql`
   mutation chats ($data: ChatCreateInput!) {
@@ -59,79 +49,71 @@ class Chat extends React.Component {
     })
   }
 
-  componentWillMount() {
-this.forceUpdate()  }
+  getMessage = () => {
+    const { chatTo, user } = this.props;
+    if( user && chatTo){
+      return(
+        <Query
+          query={GET_CHAT}
+          variables={{ email: user.email, sentTo: chatTo.email}}
+          // pollInterval={3}
+        >
+        {({ error, data }) => {
+          if(!data) return null;
+          const { getChat } = data;
+          if (error) return <p>Error! ${error.message}</p>;
+          if(getChat && chatTo) {
+            let chatMessage = [];
+            getChat.forEach((message) => {
+            if(message.email === user.email && chatTo.email === message.sentTo){
+              chatMessage.push(
+                <div key={`${message.email}`}
+                style={
+                  {
+                    float: "right",
+                    position: "relative",
+                    clear: "both",
+                    padding: "1px",
+                    border: "1px solid",
+                    borderRadius: "3px",
+                    marginBottom: "10px",
+                    color: "black",
+                  }
+                }
+                >
+                  <p style={{color: "blue"}}>{message.sentBy}:</p>
+                  <p>{message.message}  ◄</p>
+                </div>
+              )
+            }
+            if (message.email === chatTo.email && message.sentTo === user.email) {
+              chatMessage.push(
+                <div key={message.email} style={
+                  {
+                  float: "left",
+                  position: "relative",
+                  clear: "both",
+                  padding: "1px",
+                  border: "1px solid",
+                  borderRadius: "3px",
+                  marginBottom: "10px",
+                  color: "black",
+                  }
+                }>
+                  <p style={{color: "blue"}}>{message.sentBy}:</p>
+                  <p>►  {message.message}</p>
+                </div>
+              )
+            }
+          });
+          return chatMessage;
+          }
+          return null;
+        }}
+        </Query>)
+    }
 
-componentWillUnmount() {
-  console.log('will unmount')
-}
-
-  getMessage = () => (
-    <Query
-      query={GET_CHAT}
-      // variables={{where:
-      //   { "OR" : {email: "bhardwajsuraj@mail.com", sentTo: "shubhamsoni@mail.com"}     }}}
-      pollInterval={3}
-    >
-    {({ loading, error, data }) => {
-      console.log('Chat check', data.chats)
-      const { chatTo, user } = this.props;
-      const { chats } = data;
-      console.log('chats >>>>>>>>>>>>>', chats, chatTo);
-      // if (loading) return <p>Loading...</p>;
-      if (error) return <p>Error! ${error.message}</p>;
-      if(chats && chatTo) {
-        let chatMessage = [];
-        console.log('>>>>>>>>>', chatMessage);
-        chats.forEach((message) => {
-        if(message.email === user.email && chatTo.email === message.sentTo){
-          console.log('get chat', message.email, user.email, chatTo.email, message.sentTo )
-          chatMessage.push(
-            <div key={`${message.email}`} style={
-              {
-              float: "right",
-              position: "relative",
-              clear: "both",
-              padding: "1px",
-              border: "1px solid",
-              borderRadius: "3px",
-              marginBottom: "10px",
-              color: "black",
-              }
-            }>
-              <p style={{color: "blue"}}>{message.sentBy}:</p>
-              <p>{message.message}  ◄</p>
-            </div>
-          )
-        }
-        else if (message.email === chatTo.email && message.sentTo === user.email) {
-          console.log('get chat', message.email, chatTo.email, message.sentTo, user.email )
-          chatMessage.push(
-            <div key={message.email} style={
-              {
-              float: "left",
-              position: "relative",
-              clear: "both",
-              padding: "1px",
-              border: "1px solid",
-              borderRadius: "3px",
-              marginBottom: "10px",
-              color: "black",
-              }
-            }>
-              <p style={{color: "blue"}}>{message.sentBy}:</p>
-              <p>►  {message.message}</p>
-            </div>
-          )
-        }
-      });
-      console.log('chatmessage', chatMessage);
-      return chatMessage;
-      }
-      return null;
-    }}
-  </Query>
-  )
+  }
 
   render() {
     const { chatTo } = this.props;
@@ -184,5 +166,4 @@ componentWillUnmount() {
   }
 }
 
-// export default Chat;
-export default graphql(GET_CHAT)(Chat);
+export default Chat;

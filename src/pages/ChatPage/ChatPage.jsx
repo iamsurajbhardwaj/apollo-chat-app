@@ -13,7 +13,7 @@ class ChatPage extends React.Component {
     return (
       <div style={ { display: 'flex', flexDirection: 'column'}}>
         <span style={{ color: 'black', fontSize: '25px', textAlign: "center" }}>
-          <h1>Spread Happiness Through Your Beautiful Words !</h1>
+          <h1>Start Chatting</h1>
         </span>
         <Paper elevation={20}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>

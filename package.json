@@ -12,6 +12,7 @@
     "apollo-server": "^2.4.8",
     "eslint-config-airbnb": "^17.1.0",
     "graphql": "^14.1.1",
+    "graphql-import": "^0.7.1",
     "graphql-tag": "^2.10.1",
     "react": "^16.8.4",
     "react-apollo": "^2.5.3",

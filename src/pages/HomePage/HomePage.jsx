@@ -14,7 +14,7 @@ class HomePage extends React.Component {
       <div style={ { display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
         {/* <CssBaseline /> */}
         <span style={{ color: 'black', fontSize: '25px'}}>
-          <h1>Welcome To My Chat App</h1>
+          <h1> Welcome To My Chat App<span role="img" aria-label="emoji" >🚀</span> </h1>
           <hr/>
         </span>
         <CreateUser />

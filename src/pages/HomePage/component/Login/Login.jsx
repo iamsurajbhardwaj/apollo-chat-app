@@ -2,7 +2,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import gql from 'graphql-tag';
-import { graphql } from 'react-apollo';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,16 +13,16 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Email, VisibilityOff, Visibility } from '@material-ui/icons/';
+import { Query } from 'react-apollo';
 
-const getUser = gql`
-  query {
-    users{
+const GET_USER = gql`
+  query($email: String! ) {
+    getUser(email: $email){
       name
       email
       password
     }
   }`
-
 
 const styles = theme => ({
   main: {
@@ -80,28 +79,21 @@ class Login extends React.Component {
     });
   };
 
-  handleAuth = () => {
-    const { data: { users } } = this.props;
+  handleAuth = (data) => {
+    const {  getUser } = data;
     const { email, password } = this.state;
-    if (users && email) {
-      const authData = users.find((user) => (
-        (user.email === email) ? user : ''
-      )
-      );
-      if(authData.email === email && authData.password === password) {
+    if (getUser && email) {
+      if(getUser[0].email === email && getUser[0].password === password) {
         this.setState({
           login: true,
-          name: authData.name
-        })
-        return authData;
+          name: getUser[0].name
+        });
       } else {
         this.setState({
           error: true,
         })
       }
-      return null;
     }
-    return null;
   }
 
   render() {
@@ -110,7 +102,7 @@ class Login extends React.Component {
     return (
       <main className={classes.main}>
         <CssBaseline />
-        <Paper elevation="20" className={classes.paper}>
+        <Paper elevation={20} className={classes.paper}>
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
@@ -169,15 +161,21 @@ class Login extends React.Component {
                   Login
                   </Button>
                 </Link>)
-            : <Button
+            : (
+              <Query query={GET_USER} variables={{email: email}}>
+              {({ data }) => (
+                <Button
                 fullWidth
                 variant="contained"
                 color="primary"
-                onClick={() => this.handleAuth()}
+                onClick={() => this.handleAuth(data)}
                 className={classes.submit}
-              >
-                verify
-              </Button>
+                >
+                  verify
+                </Button>
+              )}
+              </Query>
+            )
             }
           <p>© Successive Technologies</p>
           { error? <p style={{ color: "red"}}>Please enter valid details!</p>: ''}
@@ -191,4 +189,4 @@ Login.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
-export default graphql(getUser)(withStyles(styles)(Login));
+export default withStyles(styles)(Login);

@@ -6,18 +6,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Grid } from '@material-ui/core';
-import { Email, Person, Visibility, VisibilityOff, EuroSymbol } from '@material-ui/icons/';
+import { Email, Person, Visibility, VisibilityOff } from '@material-ui/icons/';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 
 const ADD_USER = gql`
-  mutation users ($data: UserCreateInput!) {
-    createUser(data: $data) {
-      email
+  mutation($name: String!, $email: String!, $password: String!) {
+    addUser(name: $name, email: $email, password: $password) {
       name
-      gender
+      email
       password
     }
   }
@@ -29,22 +28,11 @@ class CreateUser extends React.Component {
     name: '',
     email: '',
     password: '',
-    // birthday: '',
-    gender: '',
     passwordVisibility: {
       showPassword: false,
       showConfirmPassword: false,
     },
   };
-
-  // getDate = () => {
-  //   let today = new Date();
-  //   const dd = String(today.getDate()).padStart(2, '0');
-  //   const mm = String(today.getMonth() + 1).padStart(2, '0');
-  //   const yyyy = today.getFullYear();
-  //   today =  yyyy + '-' + mm + '-' + dd;
-  //   return today;
-  // }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -67,14 +55,15 @@ class CreateUser extends React.Component {
     })
   }
 
-  handleCreateUser = createUser => () => {
-    const { email, name, gender, password } = this.state;
-    createUser({ variables: { data: { email , name , gender ,password } } });
+  handleCreateUser = addUser => () => {
+    const { name, email, password } = this.state;
+    console.log('handleCreateUser', this.state);
+    addUser({ variables: { name , email, password } });
     this.handleClose();
   }
 
   render() {
-    const { open, name, email, password, gender, confirmPassword, passwordVisibility } = this.state;
+    const { open, name, email, password, confirmPassword, passwordVisibility } = this.state;
     const { showConfirmPassword, showPassword } = passwordVisibility;
     return (
       <div>
@@ -124,43 +113,6 @@ class CreateUser extends React.Component {
                 ),
               }}
             />
-            {/* <Grid container spacing={16} alignContent='space-between' > */}
-              {/* <Grid item xs={6}>
-                <TextField
-                required
-                fullWidth
-                id="outlined-birthday"
-                label="Birthday"
-                type="date"
-                defaultValue={this.getDate()}
-                onChange={this.handleChange('birthday')}
-                margin="normal"
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              </Grid> */}
-              {/* <Grid item xs={16}> */}
-                <TextField
-                  required
-                  fullWidth
-                  id="outlined-gender"
-                  label="Gender"
-                  value={gender}
-                  onChange={this.handleChange('gender')}
-                  margin="normal"
-                  variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <EuroSymbol />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              {/* </Grid> */}
-            {/* </Grid> */}
             <Grid container spacing={16} alignContent='space-between' >
               <Grid item xs={6}>
                 <TextField
@@ -219,12 +171,12 @@ class CreateUser extends React.Component {
               Cancel
             </Button>
             <Mutation mutation={ADD_USER}>
-                  {(createUser, { data }) => (
-                    <Button variant='contained' onClick={this.handleCreateUser(createUser)} color="primary">
-                      Create
-                    </Button>
-                    )
-                  }
+              {(getUser) => (
+                <Button variant='contained' onClick={this.handleCreateUser(getUser)} color="primary">
+                  Create
+                </Button>
+                )
+              }
             </Mutation>
           </DialogActions>
         </Dialog>
