@@ -8,8 +8,10 @@ import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-d
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 
+const address = window.location.hostname;
+
 const client = new ApolloClient({
-  link: new HttpLink({ uri: `http://192.168.1.86:4000/graphql` }),
+  link: new HttpLink({ uri: `http://${address}:4000/graphql` }),
   cache: new InMemoryCache()
 }) ;
 

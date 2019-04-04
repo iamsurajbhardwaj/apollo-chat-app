@@ -113,6 +113,7 @@ class Users extends React.Component {
           id="outlined-Search"
           placeholder="Search"
           value={search}
+          onClick={() => alert('This Feature will be available in Future UPDATES !')}
           onChange={this.handleChange("search")}
           InputProps={{
             endAdornment: (

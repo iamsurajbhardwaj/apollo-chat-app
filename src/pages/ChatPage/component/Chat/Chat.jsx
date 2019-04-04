@@ -1,7 +1,7 @@
 import React from 'react';
-import { TextField, AppBar, Button } from '@material-ui/core';
+import { TextField, AppBar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import { Send, Close } from '@material-ui/icons/';
+import { Send } from '@material-ui/icons';
 import gql from 'graphql-tag';
 import { Mutation, Query } from 'react-apollo';
 
@@ -42,7 +42,7 @@ class Chat extends React.Component {
     });
   };
 
-  handleCreateChat = sendMessage => () => {
+  handleCreateChat = sendMessage => {
     const { message } = this.state;
     const { chatTo, user } = this.props;
     sendMessage({ variables: { email: user.email , sentTo: chatTo.email, sentBy: user.name, message  } });
@@ -58,11 +58,6 @@ handleKey = (event, sendMessage) => {
   }
 }
 
-  handleIcon = () => {
-    this.setState = ({
-      close: false,
-    })
-  }
 
   getMessage = (data) => {
     const { getChat } = data;
@@ -135,15 +130,21 @@ handleKey = (event, sendMessage) => {
     return(
       <div style={{boxSizing: "content-box", border: "none"}}>
       <AppBar position="static">
-        <div style={{display: "flex"}}>
-          <img src="/images/receiver.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "50px", width: "auto", padding: "10px"}} />
-          <span style={{ color: "white"}}>
-            <h1>{chatTo ? `${chatTo.name}`: ''}</h1>
-          </span>
-          <Button onClick={this.handleIcon}>
-            <Close />
-          </Button>
-        </div>
+      {
+        (chatTo && close) ?
+          <div style={{display: "flex"}}>
+            <img src="/images/receiver.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "50px", width: "auto", padding: "10px"}} />
+            <span style={{ color: "white"}}>
+              <h1>{chatTo.name}</h1>
+            </span>
+            {/* <p>
+              <IconButton onClick={() => (this.setState({close: false}))}>
+                <Close />
+              </IconButton>
+            </p> */}
+          </div>: <h1 style={{textAlign: "center"}}>Select User to Chat!</h1>  
+      }
+        
       </AppBar>
         <div style={{overflowY: "scroll",overflow: "auto", height: "470px"}}>
           {
@@ -158,6 +159,8 @@ handleKey = (event, sendMessage) => {
         {
           chatTo ?
             (
+              <Mutation mutation={ADD_CHAT}>
+                        {(sendMessage) => (
               <TextField
                 fullWidth
                 id="standard-SendMessage"
@@ -166,23 +169,23 @@ handleKey = (event, sendMessage) => {
                 margin="normal"
                 variant="standard"
                 onChange={this.handleChange('message')}
-                // onKeyPress={(e) => this.handleKey(e, sendMessage)}
+                onKeyPress={(e) => ((e.key === "Enter")? this.handleCreateChat(sendMessage): '')}
                 InputProps={{
                   endAdornment: (
-                    <Mutation mutation={ADD_CHAT}>
-                        {(createChat, { data }) => (
+                    
                           <IconButton
                           aria-label="Send-Message"
-                          onClick={this.handleCreateChat(createChat)}
+                          onClick={() => this.handleCreateChat(sendMessage)}
                           >
                           <Send color="primary" />
-                          </IconButton>
-                        )
-                        }
-                  </Mutation>
+                          </IconButton> 
+                        
                   ),
                 }}
               />
+              )
+                        }
+                  </Mutation>
             ) : ''
         }
       </div>

@@ -82,8 +82,7 @@ class Login extends React.Component {
   handleAuth = (data) => {
     const {  getUser } = data;
     const { email, password } = this.state;
-    console.log('check', getUser);
-    if(!getUser) {
+    if(!getUser.length) {
       this.setState({
         error: true,
       })
@@ -107,7 +106,6 @@ class Login extends React.Component {
   render() {
     const { classes } = this.props;
     const { name, email, password, showPassword, login, error } = this.state;
-    console.log(email, password)
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -177,6 +175,7 @@ class Login extends React.Component {
                 fullWidth
                 variant="contained"
                 color="primary"
+                loading="true"
                 onClick={() => this.handleAuth(data)}
                 className={classes.submit}
                 >
