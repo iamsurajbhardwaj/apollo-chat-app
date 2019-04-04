@@ -8,13 +8,14 @@ const typeDefs = `
 
   type Chat {
     email: String!
-    message: String!
+    sentBy: String!
     sentTo: String!
-    SentBy: String!
+    message: String!
   }
   type Query {
     getAllUser: [User]
     getUser(email: String!): [User]
+    getAllChat: [Chat]
     getChat(email: String!, sentTo: String!): [Chat]
   }
 

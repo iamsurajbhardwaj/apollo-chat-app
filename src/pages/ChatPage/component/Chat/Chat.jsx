@@ -1,13 +1,14 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
+import { TextField, AppBar, Button } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import { Send } from '@material-ui/icons/';
+import { Send, Close } from '@material-ui/icons/';
 import gql from 'graphql-tag';
-import { Mutation, Query, graphql } from 'react-apollo';
+import { Mutation, Query } from 'react-apollo';
+
 
 const GET_CHAT = gql`
-  query($email: String!, $SentTo: String!) {
-    getChat(email: $email, sentTo: $SentTo){
+  query($email: String!, $sentTo: String!) {
+    getChat(email: $email, sentTo: $sentTo){
       email
       sentBy
       sentTo
@@ -16,8 +17,8 @@ const GET_CHAT = gql`
   }`
 
   const ADD_CHAT = gql`
-  mutation chats ($data: ChatCreateInput!) {
-    createChat(data: $data) {
+  mutation ($email: String!, $sentTo: String!, $sentBy: String!, $message: String!) {
+    sendMessage(email: $email, sentTo: $sentTo, sentBy: $sentBy, message: $message  ) {
       email
       message
       sentBy
@@ -30,7 +31,8 @@ class Chat extends React.Component {
   constructor(props){
     super(props);
     this.state =({
-      message: ''
+      message: '',
+      close: true,
     });
   }
 
@@ -40,97 +42,118 @@ class Chat extends React.Component {
     });
   };
 
-  handleCreateChat = createChat => () => {
+  handleCreateChat = sendMessage => () => {
     const { message } = this.state;
     const { chatTo, user } = this.props;
-    createChat({ variables: { data: { email: user.email , message , sentBy: user.name, sentTo: chatTo.email } } });
+    sendMessage({ variables: { email: user.email , sentTo: chatTo.email, sentBy: user.name, message  } });
     this.setState({
       message: '',
     })
   }
 
-  getMessage = () => {
-    const { chatTo, user } = this.props;
-    if( user && chatTo){
-      return(
-        <Query
-          query={GET_CHAT}
-          variables={{ email: user.email, sentTo: chatTo.email}}
-          // pollInterval={3}
-        >
-        {({ error, data }) => {
-          if(!data) return null;
-          const { getChat } = data;
-          if (error) return <p>Error! ${error.message}</p>;
-          if(getChat && chatTo) {
-            let chatMessage = [];
-            getChat.forEach((message) => {
-            if(message.email === user.email && chatTo.email === message.sentTo){
-              chatMessage.push(
-                <div key={`${message.email}`}
-                style={
-                  {
-                    float: "right",
-                    position: "relative",
-                    clear: "both",
-                    padding: "1px",
-                    border: "1px solid",
-                    borderRadius: "3px",
-                    marginBottom: "10px",
-                    color: "black",
-                  }
-                }
-                >
-                  <p style={{color: "blue"}}>{message.sentBy}:</p>
-                  <p>{message.message}  ◄</p>
-                </div>
-              )
-            }
-            if (message.email === chatTo.email && message.sentTo === user.email) {
-              chatMessage.push(
-                <div key={message.email} style={
-                  {
-                  float: "left",
-                  position: "relative",
-                  clear: "both",
-                  padding: "1px",
-                  border: "1px solid",
-                  borderRadius: "3px",
-                  marginBottom: "10px",
-                  color: "black",
-                  }
-                }>
-                  <p style={{color: "blue"}}>{message.sentBy}:</p>
-                  <p>►  {message.message}</p>
-                </div>
-              )
-            }
-          });
-          return chatMessage;
-          }
-          return null;
-        }}
-        </Query>)
-    }
+handleKey = (event, sendMessage) => {
+  const x = event.key;
+  if(x === "Enter") {
+  this.handleCreateChat(sendMessage);
+  }
+}
 
+  handleIcon = () => {
+    this.setState = ({
+      close: false,
+    })
+  }
+
+  getMessage = (data) => {
+    const { getChat } = data;
+    const { chatTo, user } = this.props;
+    let chatMessage = [];
+    let id = 0;
+    if(getChat) {
+      getChat.forEach((message) => {
+        if(message.email === user.email){
+          id += 1;
+          chatMessage.push(
+            <div
+              key={`${message.email}.${id}`}
+              style={
+                {
+                  float: "right",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  clear: "both",
+                  position: "relative",
+                  fontWeight: "bolder",
+                  border: "2px solid #ccc",
+                  backgroundColor: "#ddd",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  margin:" 10px 0",
+                  width: "97%"
+                }
+              }
+            >
+              <p style={{paddingRight: "20px", float: "right"}}>{message.message}</p>
+              <img src="/images/sender.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "30px", width: "auto", paddingRight: "10px"}} />
+            </div>
+          )
+        }
+        if(message.email === chatTo.email){
+          id += 1;
+          chatMessage.push(
+            <div
+              key={`${message.email}.${id + 1}`}
+              style={
+                {
+                  float: "left",
+                  display: "flex",
+                  clear: "both",
+                  position: "relative",
+                  fontWeight: "bold",
+                  border: "2px solid #dedede",
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "5px",
+                  padding: "10px",
+                  margin:" 10px 0",
+                  width: "97%"
+                }
+              }
+            >
+              <img src="/images/receiver.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "30px", width: "auto", paddingLeft: "10px"}} />
+              <p style={{paddingLeft: "20px"}}>{message.message}</p>
+            </div>
+          )
+        }
+      })
+    }
+    return chatMessage;
   }
 
   render() {
-    const { chatTo } = this.props;
-    const { message } = this.state;
+    const { chatTo, user } = this.props;
+    const { message, close } = this.state;
     return(
       <div style={{boxSizing: "content-box", border: "none"}}>
-        <div style={{display: "flex", justifyContent: "space-between"}}>
-          <span style={{ color: "Blue", textAlign: "left"}}>
-            <h2>{chatTo ? `TO► ${chatTo.name}`: ''}</h2>
+      <AppBar position="static">
+        <div style={{display: "flex"}}>
+          <img src="/images/receiver.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "50px", width: "auto", padding: "10px"}} />
+          <span style={{ color: "white"}}>
+            <h1>{chatTo ? `${chatTo.name}`: ''}</h1>
           </span>
-          <span style={{ color: "red", textAlign: "right"}}>
-            <h2>My Chat App</h2>
-          </span>
+          <Button onClick={this.handleIcon}>
+            <Close />
+          </Button>
         </div>
-        <hr color="blue"/>
-        <div style={{overflowY: "scroll",overflow: "auto", height: "300px"}}>
-          { this.getMessage() }
+      </AppBar>
+        <div style={{overflowY: "scroll",overflow: "auto", height: "470px"}}>
+          {
+            (chatTo && user && close) ?
+            <Query query={GET_CHAT} variables={{email: user.email, sentTo: chatTo.email}} pollInterval={3}>
+              {
+                ({ data }) => (this.getMessage(data))
+              }
+            </Query>: ''
+          }
         </div>
         {
           chatTo ?
@@ -143,6 +166,7 @@ class Chat extends React.Component {
                 margin="normal"
                 variant="standard"
                 onChange={this.handleChange('message')}
+                // onKeyPress={(e) => this.handleKey(e, sendMessage)}
                 InputProps={{
                   endAdornment: (
                     <Mutation mutation={ADD_CHAT}>

@@ -82,10 +82,18 @@ class Login extends React.Component {
   handleAuth = (data) => {
     const {  getUser } = data;
     const { email, password } = this.state;
+    console.log('check', getUser);
+    if(!getUser) {
+      this.setState({
+        error: true,
+      })
+      return null;
+    }
     if (getUser && email) {
       if(getUser[0].email === email && getUser[0].password === password) {
         this.setState({
           login: true,
+          error: false,
           name: getUser[0].name
         });
       } else {
@@ -99,6 +107,7 @@ class Login extends React.Component {
   render() {
     const { classes } = this.props;
     const { name, email, password, showPassword, login, error } = this.state;
+    console.log(email, password)
     return (
       <main className={classes.main}>
         <CssBaseline />

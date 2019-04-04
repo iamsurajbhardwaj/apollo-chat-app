@@ -27,6 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "server": "node src/server/server.js",
     "lint": "./node_modules/eslint/bin/eslint.js src/**/*.js -c .eslintrc",
     "lint:fix": "node_modules/eslint/bin/eslint.js src/**/*.js -c .eslintrc --fix",
     "build": "react-scripts build",

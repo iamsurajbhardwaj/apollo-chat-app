@@ -104,15 +104,15 @@ class Users extends React.Component {
     const { search } = this.state;
     return (
       <div style={{paddingRight: "5px", paddingLeft: "5px", }}>
-        <div>
-          <h1>{user.name}</h1>
+        <div style={{display: "flex"}}>
+          <img src="/images/sender.png" alt="receiver-avatar" style={{borderRadius: "50%", height: "50px", width: "auto", padding: "10px"}} />
+          <h3>{user.name}</h3>
         </div>
         <hr color="green" />
         <TextField
           id="outlined-Search"
           placeholder="Search"
           value={search}
-          // variant="outlined"
           onChange={this.handleChange("search")}
           InputProps={{
             endAdornment: (

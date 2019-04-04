@@ -4,6 +4,7 @@ const pubSub = require('./server')
 const USER_ADDED = 'USER_ADDED';
 const NEW_MESSAGE = 'NEW_MESSAGE'
 
+
 const resolvers = {
   Query: {
     getAllUser: () => {
@@ -15,32 +16,35 @@ const resolvers = {
     },
 
     getChat: (parent, { email, sentTo }) => {
-      return User.filter(data => ( (data.email === email && data.sentTo === sentTo) || (data.email === sentTo && data.sentTo === email)));
+      return Chat.filter(data => ( (data.email === email && data.sentTo === sentTo) || (data.email === sentTo && data.sentTo === email)));
+    },
+    getAllChat: () => {
+      return Chat;
     }
   },
 
   Mutation: {
     addUser: (parent, { name, email, password }) => {
       const newUser = {
-        id: User.length + 1,
+        id: User.length,
         name,
         email,
         password,
       };
       User.push(newUser);
-      pubSub.publish(USER_ADDED, { newUser: newUser });
+      pubSub.Publish(USER_ADDED, { newUser: newUser });
       return temp;
     },
 
     sendMessage: (parent, { email, message, sentTo, sentBy }) => {
       const newChat = {
         email,
-        message,
         sentTo,
         sentBy,
+        message,
       };
       Chat.push(newChat);
-      pubSub.publish(NEW_MESSAGE, { newMessage: newChat });
+      pubSub.Publish(NEW_MESSAGE, { newMessage: newChat });
       return temp;
     }
   },

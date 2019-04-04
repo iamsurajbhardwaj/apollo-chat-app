@@ -9,7 +9,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: 'http://localhost:4000/graphql' }),
+  link: new HttpLink({ uri: `http://192.168.1.86:4000/graphql` }),
   cache: new InMemoryCache()
 }) ;
 
